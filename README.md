@@ -433,4 +433,8 @@ Built with [Gemini Live](https://aistudio.google.com/docs/live-api/overview) · 
 
 *TARS uses only synthetic data. All outlet names, owner names, and brand names are invented and do not represent real businesses or individuals.*
 
+---
+
+**Author:** Tushar Singh
+
 </div>
