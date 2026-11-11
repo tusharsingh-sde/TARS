@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "tars-backend"
+version = "0.1.0"
+description = "Voice-first order-capture agent backend for FMCG field sales reps"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi",
+    "uvicorn[standard]",
+    "pydantic>=2",
+    "pydantic-settings",
+    "sqlalchemy>=2",
+    "rapidfuzz",
+    "google-genai",
+    "python-dotenv",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-asyncio",
+    "httpx",
+    "mypy",
+    "ruff",
+]
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+asyncio_default_fixture_loop_scope = "function"
+
+[tool.mypy]
+python_version = "3.12"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+

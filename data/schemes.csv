@@ -1,0 +1,11 @@
+scheme_id,sku_id,min_qty,discount_bps,valid_from,valid_to,description
+SCH-001,SKU-001,5,500,2026-10-01,2026-12-31,Buy 5+ cartons Surya Crisp Glucose 100g -> 5% (500 bps) off
+SCH-002,SKU-009,4,300,2026-10-15,2026-12-31,Buy 4+ cartons Swadista Masala Noodles 70g -> 3% (300 bps) off
+SCH-003,SKU-017,10,400,2026-11-01,2026-12-15,Buy 10+ bags Chamak Plus Detergent 1kg -> 4% (400 bps) off
+SCH-004,SKU-025,3,250,2026-10-01,2026-11-30,Buy 3+ cartons Shuddh Khet Mustard Oil 1L -> 2.5% (250 bps) off
+SCH-005,SKU-033,8,350,2026-10-20,2026-12-31,Buy 8+ bags Parvat Dew Assam Tea 250g -> 3.5% (350 bps) off
+SCH-006,SKU-041,20,200,2026-10-01,2026-12-31,Buy 20+ bags Bhoomi Fresh Iodized Salt 1kg -> 2% (200 bps) off
+SCH-007,SKU-049,6,450,2026-11-01,2026-12-31,Buy 6+ cartons Komal Care Toothpaste 100g -> 4.5% (450 bps) off
+SCH-008,SKU-065,5,150,2026-10-10,2026-12-20,Buy 5+ cartons Shvet Dairy Toned Milk 1L -> 1.5% (150 bps) off
+SCH-009,SKU-058,6,300,2026-08-01,2026-09-30,Festive Pre-Season: 6+ cartons Teekha Twist Pudina Chips -> 3% off (expired)
+SCH-010,SKU-073,12,100,2026-09-01,2026-10-31,Monsoon Promo: 12+ pieces Tadka Craft Tomato Ketchup 500g -> 1% off (expired)

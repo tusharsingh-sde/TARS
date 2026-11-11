@@ -1,0 +1,81 @@
+sku_id,brand,product,pack_size,unit,mrp_paise,base_price_paise,stock_units,aliases
+SKU-001,Surya Crisp,Glucose Biscuit,100g,carton,72000,64000,140,surya glucose|glucose 10 wala|surya biscuit 100g
+SKU-002,Surya Crisp,Glucose Biscuit,50g,carton,72000,62500,180,surya chota|glucose 5 wala|surya 50g
+SKU-003,Surya Crisp,Marie Crisp Biscuit,200g,carton,96000,84000,95,surya marie|marie 200g|marie biscuit
+SKU-004,Surya Crisp,Butter Bite Cookies,150g,carton,120000,104000,75,butter bite|surya butter|butter biscuit 150g
+SKU-005,Surya Crisp,Jeera Puff Biscuit,120g,carton,84000,73500,60,jeera puff|namkeen biscuit|surya jeera
+SKU-006,Surya Crisp,Elaichi Cream Biscuit,100g,carton,108000,95000,88,elaichi cream|cream biscuit|surya cream
+SKU-007,Surya Crisp,Suji Toast Rusk,300g,bag,4500,3900,110,suji rusk|surya toast|rusk 300g
+SKU-008,Surya Crisp,Choco Chip Cookie,120g,carton,144000,126000,42,choco cookie|surya choco|chocolate biscuit
+SKU-009,Swadista,Masala Instant Noodles,70g,carton,134400,118000,160,swadista noodles|masala 14 wala|instant noodles 70g
+SKU-010,Swadista,Masala Instant Noodles Family,280g,carton,134400,116000,70,noodles bada|noodles family pack|swadista 280g
+SKU-011,Swadista,Atta Vegetable Noodles,75g,carton,144000,127000,52,atta noodles|veg noodles|swadista atta
+SKU-012,Swadista,Cheese Macaroni Cup,65g,carton,96000,84500,48,macaroni|swadista pasta|cheese cup
+SKU-013,Swadista,Roasted Vermicelli,400g,bag,4800,4150,90,sewai|vermicelli|swadista sewai 400g
+SKU-014,Swadista,Instant Masala Oats,400g,bag,9500,8200,64,masala oats|swadista oats|oats 400g
+SKU-015,Swadista,Kanda Poha Mix,500g,bag,6000,5200,85,poha 500g|swadista poha|kanda poha
+SKU-016,Swadista,Tomato Soup Sachet,15g,carton,48000,42000,120,soup sachet|tomato soup|swadista soup
+SKU-017,Chamak Plus,Detergent Washing Powder,1kg,bag,13500,11500,55,chamak 1kg|washing powder 1 kilo|detergent 1kg
+SKU-018,Chamak Plus,Detergent Washing Powder,500g,bag,7000,6000,115,chamak aadha kilo|detergent 500g|washing powder 500g
+SKU-019,Chamak Plus,Stain Buster Detergent,2kg,bag,26000,22400,0,chamak 2kg|stain buster|bada detergent 2 kilo
+SKU-020,Chamak Plus,Extra Power Detergent Bar,250g,carton,96000,83000,105,detergent bar|kapda sabun|chamak bar
+SKU-021,Chamak Plus,Lemon Dishwash Gel,500ml,piece,11500,9800,92,dishwash gel|bartan gel|lemon gel 500ml
+SKU-022,Chamak Plus,Dishwash Scourer Tub,400g,piece,5500,4700,130,bartan bar|dishwash tub|chamak tub
+SKU-023,Chamak Plus,Pine Floor Disinfectant,1L,piece,19500,16800,68,floor cleaner|pocha liquid|pine phenyl 1L
+SKU-024,Chamak Plus,Sparkle Toilet Cleaner,500ml,piece,9900,8500,74,toilet cleaner|bathroom cleaner|sparkle 500ml
+SKU-025,Shuddh Khet,Kachi Ghani Mustard Oil,1L,carton,180000,158000,65,sarson tel 1L|mustard oil 1L|shuddh khet tel
+SKU-026,Shuddh Khet,Kachi Ghani Mustard Oil,500ml,carton,184000,162000,80,sarson aadha litre|mustard 500ml|tel 500ml
+SKU-027,Shuddh Khet,Refined Sunflower Oil,1L,carton,168000,148000,90,sunflower oil|refined tel 1L|khet refined
+SKU-028,Shuddh Khet,Refined Soyabean Oil,1L,carton,156000,138000,102,soyabean oil|soya tel 1L|khet soya
+SKU-029,Shuddh Khet,Pure Cow Ghee Pouch,500ml,piece,34500,30500,46,desi ghee|cow ghee 500ml|ghee aadha kilo
+SKU-030,Shuddh Khet,Chakki Fresh Atta,5kg,bag,23500,20800,110,atta 5 kilo|chakki atta|khet atta 5kg
+SKU-031,Shuddh Khet,Chakki Fresh Atta,10kg,bag,45000,39800,78,atta 10 kilo|bada atta|khet atta 10kg
+SKU-032,Shuddh Khet,Fine Chana Besan,500g,bag,6500,5600,95,besan 500g|chana besan|khet besan
+SKU-033,Parvat Dew,Assam Kadak Leaf Tea,250g,bag,14500,12600,125,chai patti 250g|kadak tea|assam chai
+SKU-034,Parvat Dew,Assam Kadak Leaf Tea,500g,bag,28000,24500,84,chai patti aadha kilo|tea 500g|parvat tea
+SKU-035,Parvat Dew,Tulsi Green Tea Bags,25pc,piece,16000,13800,56,green tea|tulsi tea|tea bag 25
+SKU-036,Parvat Dew,Classic Instant Coffee,50g,piece,12500,10800,62,coffee jar|instant coffee 50g|parvat coffee
+SKU-037,Parvat Dew,Instant Coffee Sachet,2g,carton,40000,34500,150,coffee 2 wala|coffee sachet|pouch coffee
+SKU-038,Parvat Dew,Spring Mineral Water,1L,carton,24000,19500,0,pani bottle|mineral water 1L|drinking water
+SKU-039,Parvat Dew,Spring Mineral Water,500ml,carton,24000,19000,135,chota pani|water 500ml|pani half litre
+SKU-040,Parvat Dew,Lemon Iced Tea Premix,200g,piece,11000,9400,44,iced tea|lemon tea|premix 200g
+SKU-041,Bhoomi Fresh,Iodized Crystal Salt,1kg,bag,2800,2350,220,namak 1kg|bhoomi salt|iodized namak
+SKU-042,Bhoomi Fresh,Sendha Rock Salt,500g,bag,4500,3800,96,sendha namak|rock salt|vrat namak
+SKU-043,Bhoomi Fresh,Haldi Turmeric Powder,200g,bag,6800,5800,118,haldi 200g|turmeric powder|bhoomi haldi
+SKU-044,Bhoomi Fresh,Lal Mirch Chilli Powder,200g,bag,8200,7100,104,lal mirch|chilli powder 200g|mirchi powder
+SKU-045,Bhoomi Fresh,Dhania Coriander Powder,200g,bag,6200,5300,112,dhania powder|coriander 200g|bhoomi dhania
+SKU-046,Bhoomi Fresh,Shahi Garam Masala,100g,piece,8800,7500,76,garam masala|shahi masala|bhoomi masala
+SKU-047,Bhoomi Fresh,Aged Basmati Rice,5kg,bag,54000,47500,58,basmati chawal|rice 5kg|bhoomi basmati
+SKU-048,Bhoomi Fresh,Unpolished Toor Dal,1kg,bag,17500,15400,86,toor dal|arhar dal 1kg|dal 1 kilo
+SKU-049,Komal Care,Herbal Fresh Toothpaste,100g,carton,132000,114000,90,toothpaste 100g|manjan paste|komal paste
+SKU-050,Komal Care,Herbal Fresh Toothpaste,200g,carton,120000,103000,62,bada toothpaste|paste 200g|family paste
+SKU-051,Komal Care,Neem Tulsi Bath Soap,100g,carton,108000,94000,145,neem sabun|nahane ka sabun|komal soap
+SKU-052,Komal Care,Milk Cream Bath Soap,125g,carton,132000,115000,98,cream soap|milk sabun|doodh sabun
+SKU-053,Komal Care,Citrus Liquid Handwash,200ml,piece,9500,8100,82,handwash bottle|haath dhone wala|liquid handwash
+SKU-054,Komal Care,Pure Coconut Hair Oil,200ml,piece,9800,8400,108,nariyal tel|coconut oil 200ml|balon ka tel
+SKU-055,Komal Care,Amla Strong Shampoo,180ml,piece,13500,11600,66,shampoo bottle|amla shampoo|komal shampoo
+SKU-056,Komal Care,Cooling Body Talc,150g,piece,11500,9800,54,talcum powder|thanda powder|body talc
+SKU-057,Teekha Twist,Classic Salted Chips,52g,carton,96000,83000,0,salted chips|chips 20 wala|teekha chips
+SKU-058,Teekha Twist,Pudina Masala Chips,52g,carton,96000,83000,115,pudina chips|green chips|masala chips 20
+SKU-059,Teekha Twist,Puffed Masala Sticks,45g,carton,48000,41500,165,masala sticks|tedhe stick|teekha 10 wala
+SKU-060,Teekha Twist,Bikaneri Aloo Bhujia,200g,bag,5500,4700,128,aloo bhujia|bhujia 200g|namkeen bhujia
+SKU-061,Teekha Twist,Crispy Moong Dal,200g,bag,6000,5150,94,moong dal namkeen|crispy dal|namkeen 200g
+SKU-062,Teekha Twist,Khatta Meetha Mix,400g,bag,10500,9000,72,khatta meetha|mixture 400g|chivda mix
+SKU-063,Teekha Twist,Roasted Salted Peanuts,150g,bag,4500,3850,88,moongfali|salted peanuts|singdana 150g
+SKU-064,Teekha Twist,Cheese Corn Puffs,30g,carton,48000,41000,140,corn puffs|cheese ball|puffs 10 wala
+SKU-065,Shvet Dairy,Toned Milk Tetra Pack,1L,carton,86400,78000,92,doodh tetra|toned milk 1L|shvet milk
+SKU-066,Shvet Dairy,Toned Milk Tetra Pack,500ml,carton,88800,80000,110,chota doodh|milk 500ml|aadha litre doodh
+SKU-067,Shvet Dairy,Fresh Malai Paneer,200g,piece,9200,8100,50,paneer 200g|malai paneer|shvet paneer
+SKU-068,Shvet Dairy,Alphonso Mango Drink,200ml,carton,48000,41000,130,mango juice|aam drink|aam ras 200ml
+SKU-069,Shvet Dairy,Sweet Punjabi Lassi,200ml,carton,60000,52000,86,meethi lassi|lassi pack|shvet lassi
+SKU-070,Shvet Dairy,Salted Table Butter,100g,piece,5600,5000,74,makhan 100g|table butter|shvet butter
+SKU-071,Shvet Dairy,Processed Cheese Slices,200g,piece,14500,12800,40,cheese slice|cheese 200g|shvet cheese
+SKU-072,Shvet Dairy,Sweetened Condensed Milk,400g,piece,14200,12500,38,mithai milk|condensed milk|shvet mithai
+SKU-073,Tadka Craft,Rich Tomato Ketchup,500g,piece,11000,9400,96,tomato sauce|ketchup 500g|tadka ketchup
+SKU-074,Tadka Craft,Rich Tomato Ketchup,1kg,piece,16500,14200,64,bada ketchup|sauce 1 kilo|ketchup 1kg
+SKU-075,Tadka Craft,Green Chilli Sauce,200g,piece,5500,4700,80,chilli sauce|hari mirch sauce|chinese sauce
+SKU-076,Tadka Craft,Dark Soy Sauce,200g,piece,5800,4900,0,soya sauce|soy sauce 200g|tadka soya
+SKU-077,Tadka Craft,Homestyle Mango Pickle,400g,piece,11500,9800,70,aam ka achar|mango pickle|achar 400g
+SKU-078,Tadka Craft,Mixed Fruit Jam,500g,piece,16000,13800,58,fruit jam|bread jam|tadka jam
+SKU-079,Tadka Craft,Pure Forest Honey,250g,piece,14500,12400,68,shahad 250g|pure honey|tadka honey
+SKU-080,Tadka Craft,Vanilla Custard Powder,100g,piece,4500,3800,84,custard powder|vanilla custard|tadka custard

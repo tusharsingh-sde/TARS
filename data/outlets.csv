@@ -1,0 +1,31 @@
+outlet_id,name,owner_name,locality,city,route_code,credit_limit_paise,outstanding_paise,aliases
+OUT-001,Sharma General Store,Rameshwar Sharma,Shastri Nagar,Meerut,R1,2500000,2325000,sharma ji|sharma general|sharma store
+OUT-002,Sharma Kirana Bhandar,Devendra Sharma,Raj Nagar,Ghaziabad,R2,5000000,1200000,sharma kirana|raj nagar sharma|sharma bhandar
+OUT-003,Verma Provision Mart,Suresh Verma,Sector 14,Noida,R1,4000000,3680000,verma mart|verma provision|sector 14 verma
+OUT-004,Garg Daily Needs,Mahesh Garg,Gomti Nagar,Lucknow,R3,6000000,1800000,garg store|garg daily|gomti nagar garg
+OUT-005,Bansal Super Kirana,Nitin Bansal,Kamla Nagar,Agra,R4,8000000,7440000,bansal kirana|bansal super|kamla nagar bansal
+OUT-006,Tiwari Provision Store,Alok Tiwari,Indira Nagar,Lucknow,R3,3500000,950000,tiwari ji|tiwari store|indira nagar tiwari
+OUT-007,Chaudhary Traders,Harish Chaudhary,Sadar Bazar,Meerut,R1,10000000,4200000,chaudhary ji|chaudhary traders|sadar bazar store
+OUT-008,Mittal Retail Hub,Pankaj Mittal,Vasundhara,Ghaziabad,R2,7500000,2100000,mittal hub|mittal store|vasundhara mittal
+OUT-009,Jain Grocery Point,Ankit Jain,Sector 62,Noida,R1,4500000,1500000,jain grocery|jain point|sector 62 jain
+OUT-010,Pandey Mini Mart,Vivek Pandey,Alambagh,Lucknow,R3,3000000,800000,pandey mart|pandey mini|alambagh pandey
+OUT-011,Singhal Kirana Corner,Deepak Singhal,Sanjay Place,Agra,R4,5500000,2000000,singhal corner|singhal kirana|sanjay place singhal
+OUT-012,Yadav Household Mart,Manoj Yadav,Kankar Khera,Meerut,R1,2800000,650000,yadav mart|yadav store|kankar khera yadav
+OUT-013,Rastogi Provision House,Prashant Rastogi,Kavi Nagar,Ghaziabad,R2,9000000,3100000,rastogi house|rastogi provision|kavi nagar rastogi
+OUT-014,Saxena Family Bazaar,Gaurav Saxena,Sector 18,Noida,R2,12000000,4800000,saxena bazaar|saxena family|sector 18 saxena
+OUT-015,Mishra Ration Kendra,Santosh Mishra,Hazratganj,Lucknow,R3,4200000,1100000,mishra kendra|mishra ration|hazratganj mishra
+OUT-016,Goel Kirana Depot,Tarun Goel,Dayalbagh,Agra,R4,6500000,2250000,goel depot|goel kirana|dayalbagh goel
+OUT-017,Thakur General Emporium,Ravindra Thakur,Modipuram,Meerut,R1,3200000,400000,thakur emporium|thakur general|modipuram thakur
+OUT-018,Srivastava Daily Mart,Ashish Srivastava,Indirapuram,Ghaziabad,R2,8500000,2900000,srivastava mart|srivastava daily|indirapuram mart
+OUT-019,Bhardwaj Kirana Store,Sumit Bhardwaj,Sector 50,Noida,R2,4800000,1350000,bhardwaj store|bhardwaj kirana|sector 50 bhardwaj
+OUT-020,Awasthi Provision Shop,Raghav Awasthi,Mahanagar,Lucknow,R3,3800000,900000,awasthi shop|awasthi provision|mahanagar awasthi
+OUT-021,Khandelwal Super Store,Mohit Khandelwal,Sikandra,Agra,R4,11000000,3900000,khandelwal super|khandelwal store|sikandra khandelwal
+OUT-022,Tyagi Kirana House,Kapil Tyagi,Pallavpuram,Meerut,R1,2200000,0,tyagi house|tyagi kirana|pallavpuram tyagi
+OUT-023,Mahajan Trade Center,Sanjay Mahajan,Kaushambi,Ghaziabad,R2,14500000,5200000,mahajan center|mahajan trade|kaushambi mahajan
+OUT-024,Dubey Grocery Shop,Rajesh Dubey,Sector 76,Noida,R2,3400000,750000,dubey shop|dubey grocery|sector 76 dubey
+OUT-025,Tripathi Mini Bazaar,Kamlesh Tripathi,Jankipuram,Lucknow,R3,5200000,1900000,tripathi bazaar|tripathi mini|jankipuram tripathi
+OUT-026,Chauhan Provision Store,Vikram Chauhan,Tajganj,Agra,R4,4600000,1400000,chauhan store|chauhan provision|tajganj chauhan
+OUT-027,Saini Fresh & Kirana,Naresh Saini,Garh Road,Meerut,R1,2000000,500000,saini kirana|saini fresh|garh road saini
+OUT-028,Arora Departmental Mart,Harpreet Arora,Vaishali,Ghaziabad,R2,15000000,6100000,arora mart|arora departmental|vaishali arora
+OUT-029,Pathak General Store,Vinod Pathak,Sector 37,Noida,R1,3600000,1050000,pathak store|pathak general|sector 37 pathak
+OUT-030,Dwivedi Kirana Junction,Prakash Dwivedi,Rajajipuram,Lucknow,R3,6800000,2400000,dwivedi junction|dwivedi kirana|rajajipuram dwivedi
