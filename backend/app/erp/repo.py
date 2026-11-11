@@ -24,6 +24,7 @@ from app.erp.models import (
 )
 from app.erp.schemas import (
     ApprovalDTO,
+    AuditEventDTO,
     InvoiceDTO,
     OrderDTO,
     OrderLineDTO,
@@ -354,3 +355,142 @@ def append_audit_event(
     )
     session.add(event)
     _flush(session)
+
+
+def get_order(session: Session, order_id: str) -> OrderDTO | None:
+    """Return an OrderDTO with eager-loaded lines, or None if not found."""
+    stmt = (
+        select(Order)
+        .where(Order.order_id == order_id)
+        .options(selectinload(Order.lines))
+    )
+    order = session.scalar(stmt)
+    return _order_to_dto(order) if order is not None else None
+
+
+def set_order_total(session: Session, order_id: str, total_paise: int) -> OrderDTO:
+    """Update Order.total_paise via the ERP repository boundary."""
+    if total_paise < 0:
+        raise ERPInvalidStateError("total_paise must be non-negative")
+    order = _require_order(session, order_id)
+    order.total_paise = total_paise
+    order.updated_at = utc_now()
+    _flush(session)
+    session.refresh(order)
+    return _order_to_dto(order)
+
+
+def apply_order_commit_effects(session: Session, order_id: str) -> OrderDTO:
+    """Decrement SKU stock and increment outlet outstanding balance on committed orders."""
+    order = _require_order(session, order_id)
+    if order.status != OrderStatus.COMMITTED:
+        raise ERPInvalidStateError(
+            f"Cannot apply commit side effects for order '{order_id}' with status {order.status}"
+        )
+
+    outlet = session.get(Outlet, order.outlet_id)
+    if outlet is None:
+        raise ERPNotFoundError(f"Outlet '{order.outlet_id}' not found")
+
+    for line in order.lines:
+        sku = session.get(SKU, line.sku_id)
+        if sku is None:
+            raise ERPNotFoundError(f"SKU '{line.sku_id}' not found")
+        if sku.stock_units < line.quantity:
+            raise ERPInvalidStateError(
+                f"Insufficient stock for SKU '{sku.sku_id}': "
+                f"have {sku.stock_units}, need {line.quantity}"
+            )
+        sku.stock_units -= line.quantity
+
+    outlet.outstanding_paise += order.total_paise
+    order.updated_at = utc_now()
+    _flush(session)
+    session.refresh(order)
+    return _order_to_dto(order)
+
+
+def list_approvals_for_order(session: Session, order_id: str) -> list[ApprovalDTO]:
+    """List approval requests for an order ordered by creation sequence."""
+    stmt = (
+        select(ApprovalRequest)
+        .where(ApprovalRequest.order_id == order_id)
+        .order_by(ApprovalRequest.request_id)
+    )
+    return [ApprovalDTO.model_validate(item) for item in session.scalars(stmt).all()]
+
+
+def list_audit_events(
+    session: Session,
+    order_id: str | None = None,
+) -> list[AuditEventDTO]:
+    """List audit events optionally filtered by order_id in chronological order."""
+    stmt = select(AuditEvent).order_by(AuditEvent.id)
+    if order_id is not None:
+        stmt = stmt.where(AuditEvent.order_id == order_id)
+    return [AuditEventDTO.model_validate(item) for item in session.scalars(stmt).all()]
+
+
+def has_valid_approval(session: Session, order_id: str) -> bool:
+    """Return True if an APPROVED request exists with no subsequent line edits."""
+    approved_exists = session.scalar(
+        select(ApprovalRequest.request_id)
+        .where(
+            ApprovalRequest.order_id == order_id,
+            ApprovalRequest.status == ApprovalStatus.APPROVED,
+        )
+        .limit(1)
+    )
+    if approved_exists is None:
+        return False
+
+    latest_approved_event = session.scalar(
+        select(func.max(AuditEvent.id)).where(
+            AuditEvent.order_id == order_id,
+            AuditEvent.event_type == "APPROVAL_APPROVED",
+        )
+    )
+    latest_edit_event = session.scalar(
+        select(func.max(AuditEvent.id)).where(
+            AuditEvent.order_id == order_id,
+            AuditEvent.event_type == "LINES_UPDATED",
+        )
+    )
+    if latest_edit_event is None:
+        return True
+    if latest_approved_event is None:
+        return False
+    return latest_approved_event > latest_edit_event
+
+
+def has_read_back_for_current_draft(session: Session, order_id: str) -> bool:
+    """Return True if READ_BACK_SPOKEN is recorded after the latest line modification."""
+    latest_read_back = session.scalar(
+        select(func.max(AuditEvent.id)).where(
+            AuditEvent.order_id == order_id,
+            AuditEvent.event_type == "READ_BACK_SPOKEN",
+        )
+    )
+    if latest_read_back is None:
+        return False
+    latest_edit = session.scalar(
+        select(func.max(AuditEvent.id)).where(
+            AuditEvent.order_id == order_id,
+            AuditEvent.event_type == "LINES_UPDATED",
+        )
+    )
+    if latest_edit is None:
+        return True
+    return latest_read_back > latest_edit
+
+
+def list_all_schemes(session: Session) -> list[SchemeDTO]:
+    """Return all schemes ordered by scheme_id."""
+    stmt = select(Scheme).order_by(Scheme.scheme_id)
+    return [SchemeDTO.model_validate(item) for item in session.scalars(stmt).all()]
+
+
+def get_invoice_for_order(session: Session, order_id: str) -> InvoiceDTO | None:
+    """Return the invoice for a committed order, or None if not yet created."""
+    invoice = session.scalar(select(Invoice).where(Invoice.order_id == order_id))
+    return InvoiceDTO.model_validate(invoice) if invoice is not None else None

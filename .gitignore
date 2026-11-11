@@ -34,7 +34,7 @@ test-results/
 .env
 .env.*
 frontend/.env
-!.env.example
+!**/.env.example
 
 # SQLite databases
 *.db
@@ -44,15 +44,16 @@ frontend/.env
 *.db-wal
 *.db-shm
 
-# Audio recordings (keep folder via .gitkeep)
+# Audio recordings (keep folder via .gitkeep; optional: allow synthetic test wavs if needed)
 demo/recordings/*
 !demo/recordings/.gitkeep
 
-# Internal workflow, prompts & docs
+# Internal workflow & AI prompt artifacts (keep docs/architecture.md, commercial_case.md, decisions.md)
 prompts/
-docs/
 AGENTS.md
 PROGRESS.md
+docs/tars-technical-architecture.md
+docs/submission_checklist.md
 
 # OS / Editor / Agent / Logs
 .DS_Store
@@ -61,5 +62,6 @@ Desktop.ini
 .vscode/
 .idea/
 .gemini/
+.claude/
+.cursor/
 *.log
-

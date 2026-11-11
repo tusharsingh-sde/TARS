@@ -26,20 +26,55 @@ HINDI_NUMBER_WORDS: Final[dict[str, int]] = {
     "das": 10,
 }
 
+TANGLISH_NUMBER_WORDS: Final[dict[str, int]] = {
+    "onnu": 1,
+    "oru": 1,
+    "rendu": 2,
+    "moonu": 3,
+    "naalu": 4,
+    "anju": 5,
+    "aaru": 6,
+    "ezhu": 7,
+    "ettu": 8,
+    "ombadhu": 9,
+    "onpadhu": 9,
+    "pathu": 10,
+}
+
+MARATHI_NUMBER_WORDS: Final[dict[str, int]] = {
+    "don": 2,
+    "paach": 5,
+    "saha": 6,
+    "daha": 10,
+}
+
+NUMBER_WORDS: Final[dict[str, int]] = {
+    **HINDI_NUMBER_WORDS,
+    **TANGLISH_NUMBER_WORDS,
+    **MARATHI_NUMBER_WORDS,
+}
+
 UNIT_MAP: Final[dict[str, UnitName]] = {
     "carton": "carton",
     "cartons": "carton",
     "case": "carton",
     "cases": "carton",
+    "box": "carton",
+    "boxes": "carton",
+    "peti": "carton",
+    "petis": "carton",
+    "kattu": "carton",
     "bag": "bag",
     "bags": "bag",
     "bori": "bag",
     "packet": "bag",
     "packets": "bag",
+    "pishvi": "bag",
     "piece": "piece",
     "pieces": "piece",
     "pc": "piece",
     "nos": "piece",
+    "dabba": "piece",
 }
 
 PACK_UNIT_MAP: Final[dict[str, str]] = {
@@ -62,14 +97,25 @@ PACK_UNIT_MAP: Final[dict[str, str]] = {
 }
 
 # Multi-word phrases precede single words so "bhej do" / "laga do" are removed before "do".
+# Tanglish and Marathi/Minglish conversational fillers stripped cleanly.
 FILLER_WORDS: Final[tuple[str, ...]] = (
     "ke liye",
     "bhej do",
     "laga do",
+    "kudunga",
+    "podunga",
+    "annachi",
+    "pathva",
+    "pahije",
     "chahiye",
+    "kudu",
+    "podu",
+    "venum",
+    "taka",
     "wala",
     "wali",
     "aur",
+    "dya",
     "ko",
 )
 
@@ -121,8 +167,8 @@ def _extract_quantities_units_and_product(
     for token in tokens:
         if _INT_PATTERN.match(token):
             quantities.append(int(token))
-        elif token in HINDI_NUMBER_WORDS:
-            quantities.append(HINDI_NUMBER_WORDS[token])
+        elif token in NUMBER_WORDS:
+            quantities.append(NUMBER_WORDS[token])
         elif token in UNIT_MAP:
             units.append(UNIT_MAP[token])
         else:

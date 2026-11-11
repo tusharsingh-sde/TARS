@@ -1,0 +1,97 @@
+# Cloud Run Service Manifest for TARS Backend
+# Compatible with `gcloud run services replace deploy/cloudrun-service.yaml`
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: tars-backend
+  labels:
+    cloud.googleapis.com/location: asia-south1
+    app: tars-backend
+  annotations:
+    run.googleapis.com/launch-stage: GA
+    run.googleapis.com/description: "TARS: Voice-first FMCG field sales order agent (Gemini Live API)"
+spec:
+  template:
+    metadata:
+      annotations:
+        # Enable WebSocket session affinity for continuous audio streaming
+        run.googleapis.com/sessionAffinity: "true"
+        # 3600s timeout for long-lived audio sessions
+        autoscaling.knative.dev/maxScale: "10"
+        autoscaling.knative.dev/minScale: "0"
+        run.googleapis.com/cpu-throttling: "false"
+    spec:
+      containerConcurrency: 80
+      timeoutSeconds: 3600
+      containers:
+        - image: gcr.io/PROJECT_ID/tars-backend:latest
+          ports:
+            - name: http1
+              containerPort: 8000
+          resources:
+            limits:
+              cpu: "2000m"
+              memory: "2Gi"
+            requests:
+              cpu: "1000m"
+              memory: "1Gi"
+          env:
+            - name: TARS_GEMINI_MODEL
+              value: "gemini-3.8-live"
+            - name: TARS_DATABASE_URL
+              value: "sqlite:///./tars.db"
+            - name: TARS_OUTLET_MATCH_THRESHOLD
+              value: "0.85"
+            - name: TARS_SKU_MATCH_THRESHOLD
+              value: "0.80"
+            - name: PORT
+              value: "8000"
+            # Read Gemini API key securely from Google Cloud Secret Manager
+            - name: TARS_GEMINI_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: tars-gemini-api-key
+                  key: latest
+          startupProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            initialDelaySeconds: 2
+            periodSeconds: 5
+            failureThreshold: 3
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 8000
+            periodSeconds: 15
+            failureThreshold: 3
+---
+# Cloud Run Service Manifest for TARS Frontend (Nginx static PWA)
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: tars-frontend
+  labels:
+    cloud.googleapis.com/location: asia-south1
+    app: tars-frontend
+  annotations:
+    run.googleapis.com/launch-stage: GA
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/maxScale: "5"
+        autoscaling.knative.dev/minScale: "0"
+    spec:
+      containerConcurrency: 100
+      timeoutSeconds: 300
+      containers:
+        - image: gcr.io/PROJECT_ID/tars-frontend:latest
+          ports:
+            - name: http1
+              containerPort: 80
+          resources:
+            limits:
+              cpu: "1000m"
+              memory: "512Mi"
+

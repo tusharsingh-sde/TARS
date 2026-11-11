@@ -101,3 +101,13 @@ class ApprovalDTO(BaseModel):
     decided_at: datetime | None
     created_at: datetime
 
+
+class AuditEventDTO(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    order_id: str | None
+    event_type: str
+    payload_json: str
+    created_at: datetime
+
