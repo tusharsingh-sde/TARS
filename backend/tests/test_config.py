@@ -36,3 +36,19 @@ def test_tars_database_url_overrides_default(
     finally:
         get_settings.cache_clear()
 
+
+def test_settings_ignores_non_tars_keys_in_dotenv(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+) -> None:
+    (tmp_path / ".env").write_text(
+        "TARS_GEMINI_MODEL=gemini-3.8-live\nVITE_API_URL=http://localhost:8000\n",
+        encoding="utf-8",
+    )
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.delenv("TARS_GEMINI_MODEL", raising=False)
+
+    settings = Settings()
+
+    assert settings.gemini_model == "gemini-3.8-live"
+

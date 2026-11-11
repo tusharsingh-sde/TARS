@@ -1,0 +1,24 @@
+services:
+  tars-backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    # For SQLite persistence across restarts, mount ./backend/data-store (e.g. ./backend/data-store:/app/data-store)
+    # and set TARS_DATABASE_URL accordingly; for now nothing extra is mounted and the DB stays inside the container.
+    restart: unless-stopped
+
+  tars-frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: http://localhost:8000
+    depends_on:
+      - tars-backend
+    # CORS note: backend allows http://localhost:5173 and http://127.0.0.1:5173, so no CORS change is needed
+    # on port 5173. If you change the frontend host port, update CORS in backend/app/main.py and record it in docs/decisions.md.
+    ports:
+      - "5173:80"
+    restart: unless-stopped
+

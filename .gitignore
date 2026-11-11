@@ -20,6 +20,7 @@ build/
 
 # Node / Frontend
 node_modules/
+frontend/node_modules/
 frontend/dist/
 .vite/
 npm-debug.log*
@@ -32,6 +33,7 @@ test-results/
 # Environment & Secrets
 .env
 .env.*
+frontend/.env
 !.env.example
 
 # SQLite databases

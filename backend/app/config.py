@@ -6,7 +6,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Application settings loaded from TARS_-prefixed environment variables."""
 
-    model_config = SettingsConfigDict(env_prefix="TARS_", env_file=".env")
+    model_config = SettingsConfigDict(env_prefix="TARS_", env_file=".env", extra="ignore")
 
     gemini_api_key: str = ""
     gemini_model: str = "gemini-3.8-live"

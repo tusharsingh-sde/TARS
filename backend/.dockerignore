@@ -1,0 +1,15 @@
+.venv/
+tests/
+tars.db
+*.db
+*.db-*
+*.sqlite
+*.sqlite3
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.env
+
