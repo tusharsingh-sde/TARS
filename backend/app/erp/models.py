@@ -1,12 +1,13 @@
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from enum import StrEnum
 
-from sqlalchemy import Date, DateTime, Enum as SQLEnum, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Enum as SQLEnum
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
 def utc_now() -> datetime:
-    return datetime.now(timezone.utc)
+    return datetime.now(UTC)
 
 
 class OrderStatus(StrEnum):

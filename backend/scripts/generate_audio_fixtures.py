@@ -17,7 +17,7 @@ MIN_INT16 = -32768
 
 def _clamp(val: float) -> int:
     """Clamp float to 16-bit signed integer range."""
-    return max(MIN_INT16, min(MAX_INT16, int(round(val))))
+    return max(MIN_INT16, min(MAX_INT16, round(val)))
 
 
 def generate_noisy_shop_audio(duration_sec: float = 1.0) -> bytes:

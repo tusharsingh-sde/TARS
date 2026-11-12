@@ -57,7 +57,7 @@ describe('P5-01 RepScreen', () => {
     })
     // WebSocket mock must be a constructor (class-style)
     const wsMock = { onmessage: null as ((ev: MessageEvent) => void) | null, close: vi.fn() }
-    vi.stubGlobal('WebSocket', vi.fn().mockImplementation(() => wsMock))
+    vi.stubGlobal('WebSocket', vi.fn(function () { return wsMock }))
     vi.stubGlobal('fetch', fetchMock)
 
     render(<RepScreen apiUrl="http://backend.test" onSessionId={() => undefined} sessionId={null} />)
@@ -115,7 +115,7 @@ describe('P5-01 RepScreen', () => {
       .mockResolvedValueOnce({ ok: true, json: async () => orderDetail })  // GET /api/orders/ORD-001
 
     const wsMock = { onmessage: null as ((ev: MessageEvent) => void) | null, close: vi.fn() }
-    vi.stubGlobal('WebSocket', vi.fn().mockImplementation(() => wsMock))
+    vi.stubGlobal('WebSocket', vi.fn(function () { return wsMock }))
     vi.stubGlobal('fetch', fetchMock)
 
     render(<RepScreen apiUrl="http://backend.test" onSessionId={() => undefined} sessionId={null} />)
@@ -273,7 +273,7 @@ describe('P5-04 Mobile layout', () => {
     vi.stubEnv('VITE_API_URL', '')
     // Suppress fetch calls
     vi.stubGlobal('fetch', vi.fn().mockResolvedValue({ ok: false, json: async () => ({}) }))
-    vi.stubGlobal('WebSocket', vi.fn().mockImplementation(() => ({ onmessage: null, close: vi.fn() })))
+    vi.stubGlobal('WebSocket', vi.fn(function () { return { onmessage: null, close: vi.fn() } }))
 
     render(<App />)
 

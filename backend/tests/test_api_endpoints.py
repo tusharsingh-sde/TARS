@@ -16,13 +16,13 @@ from typing import Any
 
 import pytest
 from fastapi.testclient import TestClient
-from sqlalchemy import create_engine, event as sqla_event
+from sqlalchemy import create_engine
+from sqlalchemy import event as sqla_event
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import Session
 
 from app.erp.models import Base
 from app.erp.seed import seed_database
-
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -30,7 +30,7 @@ from app.erp.seed import seed_database
 
 
 def _make_seeded_engine() -> Engine:
-    from sqlalchemy.pool import StaticPool  # noqa: PLC0415
+    from sqlalchemy.pool import StaticPool
 
     engine: Engine = create_engine(
         "sqlite:///:memory:",
@@ -41,7 +41,7 @@ def _make_seeded_engine() -> Engine:
 
     @sqla_event.listens_for(engine, "connect")
     def _fks(dbapi_conn: Any, _record: Any) -> None:
-        import sqlite3  # noqa: PLC0415
+        import sqlite3
         if isinstance(dbapi_conn, sqlite3.Connection):
             dbapi_conn.execute("PRAGMA foreign_keys=ON")
 
@@ -61,26 +61,26 @@ def client() -> Generator[TestClient, None, None]:
     by default in TestClient when we pass the app directly — tables and seed data
     are pre-created on the patched engine before the client is instantiated.
     """
-    import app.main as main_module  # noqa: PLC0415
+    import app.main as main_module
 
     engine = _make_seeded_engine()
 
     # Patch globals *before* TestClient is created
-    orig_engine = main_module._engine  # noqa: SLF001
-    orig_sessions: dict[str, Any] = main_module._sessions  # noqa: SLF001
+    orig_engine = main_module._engine
+    orig_sessions: dict[str, Any] = main_module._sessions
 
-    main_module._engine = engine  # noqa: SLF001
-    main_module._sessions = {}  # noqa: SLF001
+    main_module._engine = engine
+    main_module._sessions = {}
     # Reset trace hub entries
-    main_module._trace_hub._entries.clear()  # noqa: SLF001
-    main_module._trace_hub._next_event_id = 1  # noqa: SLF001
+    main_module._trace_hub._entries.clear()
+    main_module._trace_hub._next_event_id = 1
 
     # lifespan=False skips the async lifespan context so we control the DB ourselves
     with TestClient(main_module.app, raise_server_exceptions=True) as c:
         yield c
 
-    main_module._engine = orig_engine  # noqa: SLF001
-    main_module._sessions = orig_sessions  # noqa: SLF001
+    main_module._engine = orig_engine
+    main_module._sessions = orig_sessions
     engine.dispose()
 
 

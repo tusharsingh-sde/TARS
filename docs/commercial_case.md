@@ -23,9 +23,9 @@ Per `AGENTS.md` §7, every metric below is explicitly tagged as either:
 ---
 
 ## 4. Measured Technical Performance (`[MEASURED IN REPO]`)
-- **Gemini Live Time-to-First-Audio `[MEASURED IN REPO]`:** **`455.6 ms`** (verified via `backend/scripts/live_smoke.py` against `gemini-3.8-live` on `v1beta` with `response_modalities=[AUDIO]`).
-- **Deterministic Tool Execution Latency `[MEASURED IN REPO]`:** **`< 15 ms` per tool call** (`resolve_outlet`, `add_or_update_line`, `check_order_rules`, `record_read_back`, `commit_order` over SQLite/SQLAlchemy).
-- **Multilingual & Code-Switched Matching Accuracy `[MEASURED IN REPO]`:** **`100%` (37/37 resilience test cases)** across Hinglish, Tanglish (Tamil + English), and Marathi/Minglish, with **0% silent guessing** on ambiguous or low-SNR inputs (`CLARIFY_FLOOR = 0.60`, `MIN_WINNER_GAP = 0.05`).
+- **Gemini Live Time-to-First-Audio `[MEASURED IN REPO]`:** **`455.6 ms`** (verified via `backend/scripts/live_smoke.py` against `gemini-3.8-live` on `v1beta` with `response_modalities=[AUDIO]`, `time_to_first_chunk_ms=455.6`).
+- **Deterministic Tool Execution Latency `[MEASURED IN REPO]`:** **`6–18 ms` per tool call** (`create_session` 6ms, `resolve_outlet` 13ms, `add_or_update_line` 18ms, `record_read_back` 9ms, `commit_order` 18ms in `backend/scripts/verify_e2e.py` over SQLite/SQLAlchemy).
+- **Multilingual & Code-Switched Test Pass Rate `[MEASURED IN REPO]`:** **`37/37` synthetic resilience & multilingual test cases passed** in `backend/tests/test_resilience_and_languages.py` across Hinglish, Tanglish (Tamil + English), and Marathi/Minglish, with `0` silent guesses on ambiguous/low-SNR test inputs (`CLARIFY_FLOOR = 0.60`, `MIN_WINNER_GAP = 0.05`; live noisy-audio field accuracy not yet measured).
 
 ---
 

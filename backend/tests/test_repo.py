@@ -13,15 +13,15 @@ from sqlalchemy.orm import Session
 from app.erp import repo
 from app.erp.errors import ERPInvalidStateError, ERPNotFoundError
 from app.erp.models import (
+    SKU,
     ApprovalStatus,
     AuditEvent,
     Base,
     OrderStatus,
     Outlet,
     OutletAlias,
-    SKU,
-    SKUAlias,
     Scheme,
+    SKUAlias,
 )
 from app.erp.schemas import OrderLineInput
 

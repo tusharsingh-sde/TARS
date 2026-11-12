@@ -4,10 +4,11 @@ RUN useradd --uid 1000 --create-home --shell /bin/bash app
 
 WORKDIR /app
 
-COPY pyproject.toml ./
+COPY backend/pyproject.toml ./
 RUN pip install --no-cache-dir .
 
-COPY --chown=app:app . .
+COPY --chown=app:app data/ /app/data/
+COPY --chown=app:app backend/ /app/
 RUN pip install --no-cache-dir --no-deps . && chown -R app:app /app
 
 USER app

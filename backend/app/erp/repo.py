@@ -8,6 +8,7 @@ from sqlalchemy.orm import InstrumentedAttribute, Session, selectinload
 
 from app.erp.errors import ERPError, ERPInvalidStateError, ERPNotFoundError
 from app.erp.models import (
+    SKU,
     ApprovalRequest,
     ApprovalStatus,
     AuditEvent,
@@ -17,9 +18,8 @@ from app.erp.models import (
     OrderStatus,
     Outlet,
     OutletAlias,
-    SKU,
-    SKUAlias,
     Scheme,
+    SKUAlias,
     utc_now,
 )
 from app.erp.schemas import (

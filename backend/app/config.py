@@ -1,4 +1,5 @@
 from functools import lru_cache
+from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -11,6 +12,7 @@ class Settings(BaseSettings):
     gemini_api_key: str = ""
     gemini_model: str = "gemini-3.8-live"
     database_url: str = "sqlite:///./tars.db"
+    seed_data_dir: Path | None = None
     outlet_match_threshold: float = 0.85
     sku_match_threshold: float = 0.80
 

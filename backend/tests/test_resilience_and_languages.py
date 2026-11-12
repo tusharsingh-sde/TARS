@@ -394,7 +394,7 @@ def test_scenario_d_ambiguous_or_wrong_outlet_blocks_draft(seeded_db: Session) -
     # Attempting to add a line when outlet is ambiguous must be BLOCKED
     line_resp = orch.dispatch_tool(
         "add_or_update_line",
-        {"utterance_or_product": "5 cartons tata salt 1kg"},
+        {"utterance_or_product": "5 cartons bhoomi salt 1kg"},
     )
     assert line_resp["status"] == "BLOCKED"
     assert line_resp["reason"] == "NO_ACTIVE_ORDER"

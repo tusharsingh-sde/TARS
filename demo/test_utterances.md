@@ -56,7 +56,7 @@ TARS parses numbers, packs, units, and regional trade terminology across Hinglis
 |---|---|---|---|---|
 | **EX-01** | Ambiguous Outlet | `"sharma"` | `status: AMBIGUOUS`<br>`candidates: [OUT-001, OUT-002]`<br>`order_id: None` | Draft order is NOT opened; rep asked to clarify locality. |
 | **EX-02** | Unknown Outlet | `"xyzabcdef qrstuvwxyz 999"` | `status: NOT_FOUND`<br>`order_id: None` | Refuses to open draft; no silent fallback to random outlet. |
-| **EX-03** | Order Line before Outlet | `"5 cartons tata salt 1kg"` (no active outlet) | `status: BLOCKED`<br>`reason: NO_ACTIVE_ORDER` | Line addition blocked until outlet is confirmed. |
+| **EX-03** | Order Line before Outlet | `"5 cartons bhoomi salt 1kg"` (no active outlet) | `status: BLOCKED`<br>`reason: NO_ACTIVE_ORDER` | Line addition blocked until outlet is confirmed. |
 | **EX-04** | Ambiguous SKU (Missing Pack) | `"5 cartons surya glucose"` | `status: AMBIGUOUS`<br>`needs_pack: True`<br>`candidates: [100g, 50g]` | Draft order lines count remains 0; rep asked for pack size. |
 | **EX-05** | Ambiguous SKU Clarified | `"5 cartons surya glucose 100g"` | `status: OK`<br>`sku_id: SKU-001` | Line successfully added only after pack size is provided. |
 | **EX-06** | Out of Stock (SKU-019) | `"2 bags stain buster 2kg"` | `status: BLOCKED`<br>`reason: LOW_STOCK`<br>`shortfall: 2` | Line blocked; draft remains empty; rep informed of 0 stock. |

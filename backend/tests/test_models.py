@@ -8,6 +8,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
 from app.erp.models import (
+    SKU,
     ApprovalRequest,
     ApprovalStatus,
     AuditEvent,
@@ -18,9 +19,8 @@ from app.erp.models import (
     OrderStatus,
     Outlet,
     OutletAlias,
-    SKU,
-    SKUAlias,
     Scheme,
+    SKUAlias,
 )
 
 

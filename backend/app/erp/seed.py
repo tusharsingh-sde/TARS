@@ -8,7 +8,7 @@ from sqlalchemy import create_engine, delete, func, select
 from sqlalchemy.orm import Session
 
 from app.config import get_settings
-from app.erp.models import Base, Outlet, OutletAlias, SKU, SKUAlias, Scheme
+from app.erp.models import SKU, Base, Outlet, OutletAlias, Scheme, SKUAlias
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 DEFAULT_DATA_DIR = REPO_ROOT / "data"
@@ -355,7 +355,12 @@ def seed_database(
     data_dir: Path | None = None,
 ) -> SeedSummary:
     """Create ERP tables if needed and seed CSV data atomically in one transaction."""
-    resolved_dir = data_dir if data_dir is not None else DEFAULT_DATA_DIR
+    configured_dir = get_settings().seed_data_dir
+    resolved_dir = (
+        data_dir
+        if data_dir is not None
+        else (configured_dir if configured_dir is not None else DEFAULT_DATA_DIR)
+    )
 
     if isinstance(target, Session):
         bind = target.get_bind()
@@ -371,9 +376,8 @@ def seed_database(
     engine = create_engine(database_url)
     try:
         Base.metadata.create_all(engine)
-        with Session(engine) as session:
-            with session.begin():
-                return _seed_in_session(session, resolved_dir)
+        with Session(engine) as session, session.begin():
+            return _seed_in_session(session, resolved_dir)
     finally:
         engine.dispose()
 

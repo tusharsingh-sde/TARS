@@ -5,7 +5,7 @@ import pytest
 from sqlalchemy import create_engine, func, select
 from sqlalchemy.orm import Session
 
-from app.erp.models import Base, Outlet, OutletAlias, SKU, SKUAlias, Scheme
+from app.erp.models import SKU, Base, Outlet, OutletAlias, Scheme, SKUAlias
 from app.erp.seed import DEFAULT_DATA_DIR, SeedDataError, format_summary, seed_database
 
 

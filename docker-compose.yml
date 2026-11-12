@@ -1,10 +1,14 @@
 services:
   tars-backend:
-    build: ./backend
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
     ports:
       - "8000:8000"
     env_file:
       - .env
+    environment:
+      TARS_SEED_DATA_DIR: /app/data
     # For SQLite persistence across restarts, mount ./backend/data-store (e.g. ./backend/data-store:/app/data-store)
     # and set TARS_DATABASE_URL accordingly; for now nothing extra is mounted and the DB stays inside the container.
     restart: unless-stopped
