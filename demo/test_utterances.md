@@ -48,6 +48,13 @@ TARS parses numbers, packs, units, and regional trade terminology across Hinglis
 | `"teen pishvi detergent 2kg pahije"` | `teen` (3) | `pishvi` → `bag` | `2kg` | `detergent` | Resolved with unit=bag, pack=2kg | Accurate parse |
 | `"ek dabba pickle 200g dya"` | `ek` (1) | `dabba` → `piece` | `200g` | `pickle` | Resolved with unit=piece, pack=200g | Accurate parse |
 
+### Hinglish & Devanagari Voice Transcription Test Set (VOICE-03)
+
+| Spoken / Transcribed Utterance | Normalized Text | Parsed Result | Catalog Match (after outlet set) |
+|---|---|---|---|
+| `"5 carton bhoomi salt ek kilo"` | `"5 carton bhoomi salt ek kilo"` | `quantity=5`, `unit="carton"`, `pack_size="1kg"`, `product_text="bhoomi salt"`, `warnings=[]` | `SKU-041` (Bhoomi Fresh Iodized Crystal Salt 1kg) |
+| `"5 भूमि सॉल्ट 1 किलो"` | `"5 bhoomi salt 1 kilo"` | `quantity=5`, `unit=None`, `pack_size="1kg"`, `product_text="bhoomi salt"`, `warnings=[]` | `SKU-041` (Bhoomi Fresh Iodized Crystal Salt 1kg) |
+
 ---
 
 ## 3. P6-04: Exception Scenarios Matrix

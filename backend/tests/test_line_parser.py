@@ -191,3 +191,33 @@ def test_do_bag_atta_bhej_do() -> None:
     assert result.product_text == "atta"
     assert result.warnings == []
 
+
+def test_number_word_before_pack_unit_is_pack_size_not_quantity() -> None:
+    result = parse_line(normalize_text("5 carton bhoomi salt ek kilo"))
+
+    assert result.quantity == 5
+    assert result.unit == "carton"
+    assert result.pack_size == "1kg"
+    assert result.product_text == "bhoomi salt"
+    assert "multiple quantities" not in result.warnings
+    assert result.warnings == []
+
+
+def test_devanagari_bhoomi_salt_1_kilo_parses_cleanly() -> None:
+    result = parse_line(normalize_text("5 भूमि सॉल्ट 1 किलो"))
+
+    assert result.quantity == 5
+    assert result.pack_size == "1kg"
+    assert result.product_text == "bhoomi salt"
+    assert result.warnings == []
+
+
+def test_devanagari_bhoomi_salt_ek_kilo_parses_cleanly() -> None:
+    result = parse_line(normalize_text("5 कार्टन भूमि साल्ट एक किलो"))
+
+    assert result.quantity == 5
+    assert result.unit == "carton"
+    assert result.pack_size == "1kg"
+    assert result.product_text == "bhoomi salt"
+    assert result.warnings == []
+

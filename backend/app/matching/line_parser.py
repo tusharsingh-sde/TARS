@@ -119,8 +119,14 @@ FILLER_WORDS: Final[tuple[str, ...]] = (
     "ko",
 )
 
+_NUMBER_WORD_ALTERNATION: Final[str] = "|".join(
+    re.escape(word) for word in sorted(NUMBER_WORDS, key=len, reverse=True)
+)
+_PACK_UNIT_ALTERNATION: Final[str] = "|".join(
+    re.escape(unit) for unit in sorted(PACK_UNIT_MAP, key=len, reverse=True)
+)
 _PACK_PATTERN: Final[re.Pattern[str]] = re.compile(
-    r"\b(\d+(?:\.\d+)?)\s*(kilos?|kg|gms?|grams?|g|ml|litres?|liters?|ltrs?|l)\b"
+    rf"\b(?:(\d+(?:\.\d+)?)\s*|({_NUMBER_WORD_ALTERNATION})\s+)({_PACK_UNIT_ALTERNATION})\b"
 )
 _FILLER_PATTERN: Final[re.Pattern[str]] = re.compile(
     r"\b(?:" + "|".join(re.escape(item) for item in FILLER_WORDS) + r")\b"
@@ -143,8 +149,15 @@ def _extract_pack_size(text: str, warnings: list[str]) -> tuple[str | None, str]
     packs: list[str] = []
 
     def _collect(match: re.Match[str]) -> str:
-        number_part = match.group(1)
-        unit_part = PACK_UNIT_MAP[match.group(2)]
+        digit_part = match.group(1)
+        word_part = match.group(2)
+        if digit_part is not None:
+            number_part = digit_part
+        elif word_part is not None:
+            number_part = str(NUMBER_WORDS[word_part])
+        else:  # pragma: no cover
+            return match.group(0)
+        unit_part = PACK_UNIT_MAP[match.group(3)]
         packs.append(f"{number_part}{unit_part}")
         return " "
 

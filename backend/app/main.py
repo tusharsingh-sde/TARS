@@ -30,6 +30,7 @@ from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from sqlalchemy import create_engine, select
 from sqlalchemy.orm import Session
+from starlette.websockets import WebSocketDisconnected
 
 from app.agent import OrderOrchestrator
 from app.approvals import resolve_approval_request
@@ -54,6 +55,7 @@ from app.erp.schemas import (
 from app.erp.seed import seed_database
 from app.trace.stream import TraceEntry, TraceStreamHub
 from app.voice.gemini_live import (
+    AudioChunkEvent,
     BargeInEvent,
     GeminiLiveBridge,
     ToolCallRequestEvent,
@@ -445,6 +447,51 @@ def dispatch_tool(
 # ---------------------------------------------------------------------------
 
 
+async def _forward_bridge_events(
+    bridge: GeminiLiveBridge,
+    websocket: WebSocket,
+    orch: OrderOrchestrator,
+    db: Session,
+) -> None:
+    """Forward Gemini Live bridge events to the voice WebSocket safely."""
+    async for event in bridge.iter_events(continuous=True):
+        if isinstance(event, BargeInEvent):
+            await websocket.send_json(
+                {"type": "barge_in", "interrupted_at_ms": event.interrupted_at_ms}
+            )
+        elif isinstance(event, ToolCallRequestEvent):
+            tool_result = orch.dispatch_tool(event.name, event.args)
+            await bridge.send_tool_response(event.call_id, event.name, tool_result)
+            order = orch.active_order_id and repo.get_order(db, orch.active_order_id)
+            await websocket.send_json(
+                {
+                    "type": "tool_call",
+                    "name": event.name,
+                    "result": tool_result,
+                    "order_updated": order.model_dump(mode="json") if order else None,
+                }
+            )
+        elif isinstance(event, AudioChunkEvent):
+            await websocket.send_json(
+                {
+                    "type": "audio_out",
+                    "pcm_b64": base64.b64encode(event.pcm_bytes).decode("ascii"),
+                    "sample_rate": event.sample_rate,
+                }
+            )
+        else:
+            try:
+                payload = event.model_dump(mode="json")
+            except Exception as exc:  # noqa: BLE001
+                logger.warning(
+                    "Skipping voice event %s due to serialization error: %s",
+                    getattr(event, "type", type(event).__name__),
+                    exc,
+                )
+                continue
+            await websocket.send_json(payload)
+
+
 @app.websocket("/ws/voice/{session_id}")
 async def ws_voice(websocket: WebSocket, session_id: str) -> None:
     """Bidirectional PCM16 audio ↔ Gemini Live bridge with tool dispatch."""
@@ -478,41 +525,7 @@ async def ws_voice(websocket: WebSocket, session_id: str) -> None:
             async with bridge:
                 # Receive from Gemini and forward to WebSocket
                 async def _recv_loop() -> None:
-                    async for event in bridge.iter_events(continuous=True):
-                        if isinstance(event, BargeInEvent):
-                            await websocket.send_json(
-                                {"type": "barge_in", "interrupted_at_ms": event.interrupted_at_ms}
-                            )
-                        elif isinstance(event, ToolCallRequestEvent):
-                            # Dispatch tool synchronously within event loop
-                            tool_result = orch.dispatch_tool(event.name, event.args)
-                            # Send result back to Gemini
-                            await bridge.send_tool_response(
-                                event.call_id, event.name, tool_result
-                            )
-                            # Notify WebSocket client
-                            order = orch.active_order_id and repo.get_order(
-                                db, orch.active_order_id
-                            )
-                            await websocket.send_json(
-                                {
-                                    "type": "tool_call",
-                                    "name": event.name,
-                                    "result": tool_result,
-                                    "order_updated": order.model_dump(mode="json")
-                                    if order
-                                    else None,
-                                }
-                            )
-                        else:
-                            payload = event.model_dump(mode="json")
-                            if event.type == "audio_out":
-                                # Send PCM bytes as base64; pcm_bytes comes from AudioChunkEvent
-                                from app.voice.gemini_live import AudioChunkEvent
-                                if isinstance(event, AudioChunkEvent):
-                                    payload["pcm_b64"] = base64.b64encode(event.pcm_bytes).decode()
-                                del payload["pcm_bytes"]
-                            await websocket.send_json(payload)
+                    await _forward_bridge_events(bridge, websocket, orch, db)
 
                 recv_task = asyncio.create_task(_recv_loop())
 
@@ -520,6 +533,8 @@ async def ws_voice(websocket: WebSocket, session_id: str) -> None:
                 try:
                     while True:
                         message = await websocket.receive()
+                        if message.get("type") == "websocket.disconnect":
+                            break
                         if message.get("bytes"):
                             await bridge.send_audio_chunk(message["bytes"])
                         elif message.get("text"):
@@ -530,7 +545,7 @@ async def ws_voice(websocket: WebSocket, session_id: str) -> None:
                             elif msg_type == "barge_in":
                                 # Client signals barge-in; Gemini VAD handles it
                                 pass
-                except WebSocketDisconnect:
+                except (WebSocketDisconnect, WebSocketDisconnected):
                     pass
                 finally:
                     recv_task.cancel()

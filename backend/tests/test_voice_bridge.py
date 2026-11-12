@@ -369,3 +369,12 @@ async def test_connect_without_api_key_raises_clear_value_error(
             await bridge.connect()
     finally:
         get_settings.cache_clear()
+
+
+def test_system_prompt_enforces_roman_script_and_never_devanagari() -> None:
+    for prompt in (SYSTEM_INSTRUCTION, build_system_prompt(rep_id="REP-01", route_code="R-NORTH")):
+        assert "Roman script" in prompt
+        assert "never in Devanagari" in prompt
+        assert "bhoomi salt" in prompt
+        assert "ek kilo" in prompt
+        assert "every transcript and reply" in prompt

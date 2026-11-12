@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import { startMicCapture, type MicCaptureHandle } from '../audio/captureMic.ts'
 import type { OrderDTO, OutletDTO, InvoiceDTO, TraceEntry } from '../types.ts'
 import { paisaToRupees } from '../types.ts'
 
@@ -12,6 +13,29 @@ interface Bubble {
   id: number
   role: 'rep' | 'tars'
   text: string
+  status?: string
+}
+
+function bubbleStatusStyle(status: string): { background: string; color: string; borderColor: string } {
+  if (status === 'OK' || status === 'MATCHED') {
+    return {
+      background: 'var(--emerald-glow)',
+      color: 'var(--emerald)',
+      borderColor: 'rgba(16, 185, 129, 0.25)',
+    }
+  }
+  if (status === 'ERROR' || status === 'NOT_FOUND') {
+    return {
+      background: 'var(--coral-bg)',
+      color: 'var(--coral)',
+      borderColor: 'rgba(239, 68, 68, 0.25)',
+    }
+  }
+  return {
+    background: 'var(--amber-bg)',
+    color: 'var(--amber)',
+    borderColor: 'rgba(245, 158, 11, 0.25)',
+  }
 }
 
 type VoiceState = 'idle' | 'listening' | 'speaking' | 'interrupted'
@@ -30,12 +54,56 @@ const GATE_STEPS = [
   { key: 'committed', label: 'Confirmed & Invoiced' },
 ]
 
+/** Normalized spoken/typed confirmation phrases that trigger read-back and commit. */
+const CONFIRMATION_PHRASES: readonly string[] = [
+  'haan',
+  'ha',
+  'yes',
+  'confirm',
+  'theek hai',
+  'confirm kar do',
+  'haan confirm',
+  'haan confirm kar do',
+]
+
+function isConfirmationPhrase(text: string): boolean {
+  const normalized = text.trim().toLowerCase().replace(/[.!?,]+$/g, '').trim()
+  return CONFIRMATION_PHRASES.includes(normalized)
+}
+
+function buildReadBackSummary(outlet: OutletDTO | null, order: OrderDTO | null): string {
+  const outletName = outlet?.name ?? 'Active outlet'
+  if (!order || order.lines.length === 0) {
+    return `${outletName}: 0 items`
+  }
+  const lineSummary = order.lines.map((l) => `${l.quantity} x ${l.sku_id}`).join(', ')
+  return `${outletName}: ${lineSummary}. Total ${paisaToRupees(order.total_paise)}`
+}
+
 function getGateIndex(status: string | undefined, readBackSpoken?: boolean): number {
   if (!status) return 0
   if (status === 'COMMITTED') return 4
   if (status === 'CONFIRMING') return readBackSpoken ? 3 : 2
   if (status === 'PENDING_APPROVAL') return 1
   return 0
+}
+
+const EXPECTED_WS_MESSAGE_TYPES = new Set([
+  'transcript',
+  'ttfa',
+  'barge_in',
+  'audio_out',
+  'tool_call',
+  'turn_complete',
+  'error',
+])
+
+function isSocketOpen(ws: WebSocket | null): boolean {
+  const openState =
+    typeof WebSocket !== 'undefined' && typeof WebSocket.OPEN === 'number'
+      ? WebSocket.OPEN
+      : 1
+  return ws !== null && ws.readyState === openState
 }
 
 let _bubbleId = 0
@@ -50,6 +118,8 @@ export function RepScreen({ apiUrl, onSessionId, sessionId }: Props) {
   const [ttfa, setTtfa] = useState<number | null>(null)
   const [voiceState, setVoiceState] = useState<VoiceState>('idle')
   const wsRef = useRef<WebSocket | null>(null)
+  const micHandleRef = useRef<MicCaptureHandle | null>(null)
+  const micStartingRef = useRef(false)
   const sidRef = useRef<string | null>(sessionId)
   const feedRef = useRef<HTMLDivElement | null>(null)
 
@@ -81,15 +151,19 @@ export function RepScreen({ apiUrl, onSessionId, sessionId }: Props) {
         ws.onmessage = (ev) => {
           try {
             const msg = JSON.parse(ev.data as string) as Record<string, unknown>
-            if (msg.type === 'transcript' && typeof msg.text === 'string') {
+            const msgType = typeof msg.type === 'string' ? msg.type : ''
+            if (msgType && !EXPECTED_WS_MESSAGE_TYPES.has(msgType)) {
+              console.warn('Unexpected voice WebSocket message type:', msgType)
+            }
+            if (msgType === 'transcript' && typeof msg.text === 'string') {
               const role = msg.role === 'user' ? 'rep' : 'tars'
               setBubbles((prev) => [...prev, { id: ++_bubbleId, role, text: msg.text as string }])
               setVoiceState(role === 'rep' ? 'listening' : 'speaking')
             }
-            if (msg.type === 'ttfa' && typeof msg.ms === 'number') {
+            if (msgType === 'ttfa' && typeof msg.ms === 'number') {
               setTtfa(msg.ms as number)
             }
-            if (msg.type === 'barge_in') {
+            if (msgType === 'barge_in') {
               setVoiceState('interrupted')
               setTimeout(() => setVoiceState('idle'), 1500)
             }
@@ -104,31 +178,47 @@ export function RepScreen({ apiUrl, onSessionId, sessionId }: Props) {
     }
     void createSession()
     return () => {
+      micHandleRef.current?.stop()
+      micHandleRef.current = null
       wsRef.current?.close()
     }
   }, [apiUrl, onSessionId])
 
-  async function dispatchTool(name: string, args: Record<string, unknown>) {
+  async function dispatchTool(
+    name: string,
+    args: Record<string, unknown>,
+  ): Promise<Record<string, unknown> | null> {
     const sid = sidRef.current
-    if (!sid) return
+    if (!sid) return null
     const start = Date.now()
     const resp = await fetch(`${apiUrl}/api/sessions/${sid}/tool`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name, args }),
     })
-    if (!resp.ok) return
+    if (!resp.ok) return null
     const body = (await resp.json()) as { result: Record<string, unknown>; trace_entries: TraceEntry[] }
     const elapsed = Date.now() - start
     setTtfa(elapsed)
 
-    // Refresh order if we can find an order_id
+    // Refresh order / append TARS response bubble
     const result = body.result
+    const resultStatus = typeof result['status'] === 'string' ? result['status'] : undefined
+    const resultMessage = typeof result['message'] === 'string' ? result['message'].trim() : ''
+    if (resultMessage.length > 0) {
+      setBubbles((prev) => [
+        ...prev,
+        { id: ++_bubbleId, role: 'tars', text: resultMessage, status: resultStatus },
+      ])
+    }
+
     const orderId =
       typeof result['order_id'] === 'string'
         ? result['order_id']
         : order?.order_id
 
+    let outletUpdated = false
+    let invoiceUpdated = false
     if (orderId) {
       const oResp = await fetch(`${apiUrl}/api/orders/${orderId}`)
       if (oResp.ok) {
@@ -140,17 +230,112 @@ export function RepScreen({ apiUrl, onSessionId, sessionId }: Props) {
         setOrder(detail.order)
         setOutlet(detail.outlet)
         setInvoice(detail.invoice)
+        outletUpdated = true
+        invoiceUpdated = detail.invoice !== null
       }
     }
+    if (
+      !outletUpdated &&
+      name === 'resolve_outlet' &&
+      resultStatus === 'MATCHED' &&
+      result['outlet'] &&
+      typeof result['outlet'] === 'object'
+    ) {
+      setOutlet(result['outlet'] as OutletDTO)
+    }
+    if (
+      !invoiceUpdated &&
+      name === 'commit_order' &&
+      result['invoice'] &&
+      typeof result['invoice'] === 'object'
+    ) {
+      setInvoice(result['invoice'] as InvoiceDTO)
+    }
+    return result
+  }
+
+  async function confirmAndCommit(confirmationPhrase: string) {
+    const summary = buildReadBackSummary(outlet, order)
+    const rbResult = await dispatchTool('record_read_back', { spoken_summary: summary })
+    if (!rbResult || rbResult['status'] !== 'OK') {
+      return
+    }
+    await dispatchTool('commit_order', { confirmation_phrase: confirmationPhrase })
   }
 
   function handleSend(text?: string) {
     const msg = (text ?? input).trim()
     if (!msg) return
     setBubbles((prev) => [...prev, { id: ++_bubbleId, role: 'rep', text: msg }])
-    // Simulate a text-mode add_or_update_line call
-    void dispatchTool('add_or_update_line', { utterance_or_product: msg })
+    if (!outlet) {
+      void dispatchTool('resolve_outlet', { query: msg })
+    } else if (isConfirmationPhrase(msg)) {
+      void confirmAndCommit(msg)
+    } else {
+      void dispatchTool('add_or_update_line', { utterance_or_product: msg })
+    }
     if (!text) setInput('')
+  }
+
+  function stopMicCapture() {
+    micHandleRef.current?.stop()
+    micHandleRef.current = null
+    setRecording(false)
+    setVoiceState('idle')
+  }
+
+  async function handleMicClick() {
+    if (recording || micHandleRef.current) {
+      stopMicCapture()
+      return
+    }
+    if (micStartingRef.current) return
+    const ws = wsRef.current
+    if (!isSocketOpen(ws)) {
+      setBubbles((prev) => [
+        ...prev,
+        { id: ++_bubbleId, role: 'tars', text: 'Voice connection not ready', status: 'ERROR' },
+      ])
+      return
+    }
+    micStartingRef.current = true
+    try {
+      const handle = await startMicCapture((pcmChunk) => {
+        const sock = wsRef.current
+        if (isSocketOpen(sock)) {
+          sock!.send(pcmChunk)
+        }
+      })
+      if (!isSocketOpen(wsRef.current)) {
+        handle.stop()
+        return
+      }
+      micHandleRef.current = handle
+      setRecording(true)
+      setVoiceState('listening')
+    } catch (err) {
+      const errName =
+        typeof err === 'object' &&
+        err !== null &&
+        'name' in err &&
+        typeof (err as { name: unknown }).name === 'string' &&
+        (err as { name: string }).name.trim().length > 0
+          ? (err as { name: string }).name
+          : 'MicrophoneError'
+      setBubbles((prev) => [
+        ...prev,
+        {
+          id: ++_bubbleId,
+          role: 'tars',
+          text: `Microphone access failed: ${errName}`,
+          status: 'ERROR',
+        },
+      ])
+      setRecording(false)
+      setVoiceState('idle')
+    } finally {
+      micStartingRef.current = false
+    }
   }
 
   const creditUsedPct =
@@ -207,6 +392,26 @@ export function RepScreen({ apiUrl, onSessionId, sessionId }: Props) {
             <span style={{ fontSize: '0.6rem', fontWeight: 700, opacity: 0.6, marginRight: '0.4rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               {b.role === 'rep' ? 'REP' : 'TARS'}
             </span>
+            {b.status && (
+              <span
+                data-testid="bubble-status"
+                style={{
+                  ...bubbleStatusStyle(b.status),
+                  fontSize: '0.6rem',
+                  fontWeight: 700,
+                  padding: '0.1rem 0.4rem',
+                  borderRadius: '999px',
+                  borderStyle: 'solid',
+                  borderWidth: '1px',
+                  marginRight: '0.4rem',
+                  fontFamily: 'var(--font-mono)',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.03em',
+                }}
+              >
+                {b.status}
+              </span>
+            )}
             {b.text}
           </div>
         ))}
@@ -232,8 +437,7 @@ export function RepScreen({ apiUrl, onSessionId, sessionId }: Props) {
           data-testid="mic-button"
           aria-label={recording ? 'Stop recording' : 'Start recording'}
           onClick={() => {
-            setRecording((r) => !r)
-            setVoiceState((v) => v === 'idle' ? 'listening' : 'idle')
+            void handleMicClick()
           }}
         >
           {recording ? '⏹' : '🎙'}
