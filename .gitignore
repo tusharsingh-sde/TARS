@@ -51,7 +51,6 @@ demo/recordings/*
 # Internal workflow & AI prompt artifacts (keep docs/architecture.md, commercial_case.md, decisions.md)
 prompts/
 AGENTS.md
-PROGRESS.md
 docs/tars-technical-architecture.md
 docs/submission_checklist.md
 
@@ -65,3 +64,4 @@ Desktop.ini
 .claude/
 .cursor/
 *.log
+PROGRESS.md
